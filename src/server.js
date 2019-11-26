@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const morgan = require('morgan');
 const cors = require('cors');
+const helmet = require('helmet');
 
 const routes = require('./routes');
 
@@ -14,6 +15,7 @@ mongoose.connect(uri, {
   useCreateIndex: true,
 });
 
+app.use(helmet());
 app.use(morgan('tiny'));
 app.use(cors());
 app.use(express.json());
