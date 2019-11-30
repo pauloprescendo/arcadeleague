@@ -10,6 +10,11 @@ const userSchema = mongoose.Schema({
     required: true,
     unique: true,
   },
+  nickname: {
+    type: String,
+    required: true,
+    unique: true,
+  },
   country: {
     type: String,
     required: true,
