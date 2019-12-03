@@ -1,4 +1,5 @@
 const yup = require('yup');
+const bcrypt = require('bcrypt');
 const User = require('../models/User');
 // eslint-disable-next-line no-useless-escape
 const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -7,7 +8,7 @@ const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+")
 module.exports = {
 
   async show(req, res) {
-    const { user_id } = req.headers;
+    const { user_id } = req.body;
 
     if (!user_id) {
       return res.status(400).json({ error: 'id has not sent' });
@@ -73,14 +74,17 @@ module.exports = {
       return res.status(400).json({ error: 'this email or nickname aready exist' });
     }
 
+    const passwordHashed = await bcrypt.hash(password, 10);
+
     const user = await User.create({
       name,
       email,
       nickname,
       country,
       birthday,
-      password,
+      password: passwordHashed,
     });
-    return res.json(user);
+
+    return res.status(201).json(user);
   },
 };
