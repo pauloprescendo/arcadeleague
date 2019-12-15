@@ -1,12 +1,13 @@
 FROM node:10
 
-WORKDIR /usr/project/api
+RUN mkdir /usr/app
+WORKDIR /usr/app
 
-COPY apps/api/package*.json ./
+COPY . .
+
+WORKDIR /usr/app/apps/api
 
 RUN npm install
-
-COPY apps/api ./
 
 EXPOSE 3333
 
