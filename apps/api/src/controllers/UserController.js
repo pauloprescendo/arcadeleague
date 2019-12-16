@@ -1,5 +1,6 @@
 const yup = require('yup');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 // eslint-disable-next-line no-useless-escape
 const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -86,5 +87,40 @@ module.exports = {
     });
 
     return res.status(201).json(user);
+  },
+
+  async login(req, res) {
+    const { email, password } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ error: 'email is required' });
+    }
+    if (!email) {
+      return res.status(400).json({ error: 'email is required' });
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(400).json({ error: 'user not found' });
+    }
+
+    const comparePassword = await bcrypt.compare(password, user.password);
+
+    if (!comparePassword) {
+      return res.status(400).json({ error: 'password is invalid' });
+    }
+
+    const payload = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      nickname: user.nickname,
+    };
+
+    jwt.sign(payload, process.env.SECRET, { expiresIn: 36000 }, (err, token) => {
+      if (err) return res.status(500).json({ error: 'token error', err });
+      return res.status(200).json({ token });
+    });
   },
 };
