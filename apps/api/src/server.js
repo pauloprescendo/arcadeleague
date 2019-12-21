@@ -10,8 +10,7 @@ const routes = require('./routes');
 
 const app = express();
 
-const uri = 'mongodb+srv://dbUser:dbUser@cluster0-epyzo.mongodb.net/arcade?retryWrites=true&w=majority';
-mongoose.connect(uri, {
+mongoose.connect('mongodb://mongo:27017/arcadeDB',{
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useCreateIndex: true,
